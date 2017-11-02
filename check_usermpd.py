@@ -9,14 +9,14 @@ import getopt
 HOST1 = "10.77.200.6"
 USER1 = 'admin'
 PASSWORD1 = 'PASSWD'
-PORT1 = '60101'
+PORT1 = '6010'
 TIMEOUT = 5
 
 # NAS2
 HOST2 = "10.77.200.6"
 USER2 = 'admin'
 PASSWORD2 = 'PASSWD'
-PORT2 = '60051'
+PORT2 = '6005'
 TIMEOUT = 5
 
 def nas(host,port,user,password,timeout):
