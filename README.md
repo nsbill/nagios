@@ -5,16 +5,17 @@
 ADD to /usr/local/etc/nagios/objects/commands.cfg
 
 ############## MPDUSER COMMAND ##################################
- # command
-define command {
+
+"define command {
    command_name    check_usermpd
    command_line    /usr/local/bin/python3 /home/scripts/check_usermpd.py $ARG1$
 }
-
+"
 
 
 ### Добавить в localhost.cfg или можно создать свой файл
 ADD to /usr/local/etc/nagios/objects/localhost.cfg
+
 check_usermpd!012500 -- какого пользователя мониторить
 
 ##############  MPD USER SERVICE #########################
