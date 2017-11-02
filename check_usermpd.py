@@ -77,7 +77,14 @@ try:
     st2 = check_user(ns2_data,login)
 #    print(st2)
     st = st1 + st2
-    print(st)
+    if len(st) > 1:
+        print(st)
+        sys.exit(2)
+    elif len(st) == 0:
+        sys.exit(1)
+    else:
+        print(st)
+        sys.exit(0)
 
 except Exception:
 #        return Status
