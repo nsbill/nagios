@@ -9,14 +9,14 @@ import getopt
 HOST1 = "10.77.200.6"
 USER1 = 'admin'
 PASSWORD1 = 'PASSWD'
-PORT1 = '6010'
+PORT1 = '60101'
 TIMEOUT = 5
 
 # NAS2
 HOST2 = "10.77.200.6"
 USER2 = 'admin'
 PASSWORD2 = 'PASSWD'
-PORT2 = '6005'
+PORT2 = '60051'
 TIMEOUT = 5
 
 def nas(host,port,user,password,timeout):
@@ -57,15 +57,9 @@ def check_user(ns_data,login=None):
                 info.append(v)
         up = []
         for value in info:
-#        print('===LOGIN = %s ===' % login)
-            if value.get('user') == login:
+            if value.get('user') == login: # Проверка подключен пользователь на сервере
 #            Status = 0
                 up.append((value.get('ng'), value.get('ip'), value.get('mac'), value.get('vlan')))
-#            print('Connection is UP - %s of user' % login)
-#            return sys.exit(0)
-#    print(up)
-#    print('Connection is DOWN - %s of user' % login)
-#    return sys.exit(1)
         return up
     else:
         up = []
@@ -78,15 +72,15 @@ try:
 #    print(ns2_data)
     if ns1_data == None and ns2_data == None:
         print('ERROR: server are unavailable')
-        sys.exit(1)
+        sys.exit(2)
     else:
         st1 = check_user(ns1_data,login) # выборка результата с NAS1
 #        print(st1)
         st2 = check_user(ns2_data,login) # выборка результата с NAS2 
 #        print(st2)
 
-    st = st1 + st2
-    if len(st) > 1:
+    st = st1 + st2          # Объеденяем результаты с NAS серверов
+    if len(st) > 1:         # Проверка на кол-во одновременных подключений и подключение
         print(st)
         sys.exit(2)
     elif len(st) == 0:
@@ -96,8 +90,7 @@ try:
         print(st)
         sys.exit(0)
 
-except Exception:
-#        return Status
+except Exception: # Когда что не так то все сюда!
     Status = 3
     print('UNKNOW - %s of user' % Status)
     sys.exit(3)
