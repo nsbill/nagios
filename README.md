@@ -15,7 +15,9 @@ define command {
 ### Добавить в localhost.cfg или можно создать свой файл
 ADD to /usr/local/etc/nagios/objects/localhost.cfg
 
-check_usermpd!012500 -- какого пользователя мониторить
+check_usermpd!012500 -- какого пользователя мониторить.
+
+012500 - это login пользователя 
 
 ```
 ##############  MPD USER SERVICE #########################
