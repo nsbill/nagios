@@ -1,4 +1,4 @@
-# Plugins Nagios MPD5 - status a user information
+# Plugins Nagios for FreeBSD MPD5 - status a user information
 
 ### Добавить в commands.cfg
 
