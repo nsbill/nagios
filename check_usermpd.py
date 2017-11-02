@@ -54,23 +54,31 @@ def check_user(ns_data,login=None):
     for v in ii:
         v = v.split('\t')
         if len(v) == 9:
-            v = (dict(zip(('ng','ip',3,'vlan',5,6,7,'user','mac'),v)))
+            v = (dict(zip(('ng','ip',3,4,'vlan',6,7,'user','mac'),v)))
             info.append(v)
+    up = []
     for value in info:
 #        print('===LOGIN = %s ===' % login)
         if value.get('user') == login:
 #            Status = 0
-            print('Connection is UP - %s of user' % login)
-            return sys.exit(0)
-#    Status = 1
-    print('Connection is DOWN - %s of user' % login)
-    return sys.exit(1)
-
+            up.append((value.get('ng'), value.get('ip'), value.get('mac'), value.get('vlan')))
+#            print('Connection is UP - %s of user' % login)
+#            return sys.exit(0)
+#    print(up)
+#    print('Connection is DOWN - %s of user' % login)
+#    return sys.exit(1)
+    return up
 try:
     ns1_data=nas(HOST1,PORT1,USER1,PASSWORD1)
     ns2_data=nas(HOST2,PORT2,USER2,PASSWORD2)
-#    st1 = check_user(ns1_data,login)
+
+    st1 = check_user(ns1_data,login)
+#    print(st1)
     st2 = check_user(ns2_data,login)
+#    print(st2)
+    st = st1 + st2
+    print(st)
+
 except Exception:
 #        return Status
     Status = 3
