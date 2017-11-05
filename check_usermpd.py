@@ -11,7 +11,7 @@ USER1 = 'admin'
 PASSWORD1 = 'PASSWD'
 PORT1 = '6010'
 TIMEOUT = 5
-NAS1 = 1 
+NAS1 = 1
 
 # NAS2
 HOST2 = "10.77.200.6"
@@ -40,11 +40,11 @@ def nas(host,port,user,password,timeout):
         return data
 
 try:
-    login = sys.argv[1]  # проверяем агрумент с nagios
+    login = sys.argv[1]  # Status Information: проверяем агрумент с nagios
 except Exception:
     Status = 3
-    print('UNKNOW - Status=%s of user' % Status)
-    print('__login__')
+    print('UNKNOW - Status=%s of user | Status=0' % Status)
+#    print('__login__')
     sys.exit(3)
 
 def check_user(ns_data,nas,login=None):
@@ -73,7 +73,7 @@ try:
     ns2_data=nas(HOST2,PORT2,USER2,PASSWORD2,TIMEOUT) # подключаемся к NAS2  
 #    print(ns2_data)
     if ns1_data == None and ns2_data == None:
-        print('ERROR: server are unavailable')
+        print('ERROR: server are unavailable | %s' % Status)
         sys.exit(2)
     else:
         st1 = check_user(ns1_data,NAS1,login) # выборка результата с NAS1
@@ -83,16 +83,16 @@ try:
 
     st = st1 + st2          # Объеденяем результаты с NAS серверов
     if len(st) > 1:         # Проверка на кол-во одновременных подключений и подключение
-        print(st)
+        print(str(st) + ' | Status=1')
         sys.exit(2)
     elif len(st) == 0:
-        print('User is not connected')
+        print('User is not connected | Status=0')
         sys.exit(1)
     else:
-        print(st)
+        print(str(st) + ' | Status=1')
         sys.exit(0)
 
 except Exception: # Когда что не так то все сюда!
     Status = 3
-    print('UNKNOW - %s of user' % Status)
+    print('UNKNOW - %s of user | Status=0' % Status)
     sys.exit(3)
