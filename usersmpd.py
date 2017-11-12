@@ -36,32 +36,21 @@ def nas(host,port,user,password,timeout,json):
             data = []
             for ng in json:
                 iface_ng = 'iface ' + ng
-                print(iface_ng)
-                tn.write(bytes('iface ' + ng + '\n', encoding = 'utf-8'))
-                tn.write(b"show customer\n")
-#                info = tn.read_until(b"show customer").translate(None, b'\t\v\f\r\'')
+#                print(iface_ng)
+                tn.write(bytes('iface ' + ng + '\n', encoding = 'utf-8')) # выбор интерфейса пользоваетелям
+                tn.write(b"show customer\n")                              # выборка данных пользователя
                 info = tn.read_until(b"show customer").splitlines()
-#                print(info)
                 data.append(info)
             tn.write(b"exit\n")
         else:
-            tn.write(b"show sessions\n")
+            tn.write(b"show sessions\n")            # Выборка всех подключенных сессий к серверу
             tn.write(b"exit\n")
-#            data = (tn.read_all().decode('ascii'))
             data = (tn.read_all().decode('utf-8'))
             return data
         return data
     except Exception:
         data = None
         return data
-
-#try:
-#    login = sys.argv[1]  # Status Information: проверяем агрумент с nagios
-#except Exception:
-#    Status = 3
-#    print('UNKNOW - Status=%s of user | Status=0' % Status)
-##    print('__login__')
-#    sys.exit(3)
 
 def check_user(ns_data,nas):
     ''' Выборка пользователей на серверах и парсим результат '''
@@ -87,12 +76,14 @@ try:
 #        print(st1)
         st2 = check_user(ns2_data,NAS2) # выборка результата с NAS2 
 #        print(st2)
-#        ns1_data=nas(HOST1,PORT1,USER1,PASSWORD1,TIMEOUT,json=st1) # подключаемся к NAS1 
+        ns1_data=nas(HOST1,PORT1,USER1,PASSWORD1,TIMEOUT,json=st1) # подключаемся к NAS1 
 #        print(ns1_data)
         ns2_data=nas(HOST2,PORT2,USER2,PASSWORD2,TIMEOUT,json=st2) # подключаемся к NAS2  
 #        print(ns2_data)
-#        data = str(ns2_data).replace('b\'\\nInterface:\\n','')\
-        data = str(ns2_data).replace('b\'\', b\'Interface:\', b\'\\t','')\
+        ns = ns1_data + ns2_data          # Объеденяем результаты с NAS серверов
+
+# Парсим ответы от серверов
+        data = str(ns).replace('b\'\', b\'Interface:\', b\'\\t','')\
                             .replace('\', b\'\\t',',')\
                             .replace('\', b\'',',')\
                             .replace(',\\t',',')\
@@ -111,63 +102,26 @@ try:
                             .replace('Peer MAC address:','Peer MAC address :')\
                             .replace('Traffic stats:','Traffic stats : ')\
 
-#                            .split(',')
-#        print(data)
-        data = data.split('], [')
-        print(data)
-        log = []
-        dictlog = {}
-        for val in data:
-#            log.append(val.split(','))
-            log_ll = []
-            log_l = (val.split(','))
-            for value in log_l:
-                l = value.split(' : ')
-                if len(l) == 2:
-                    a = re.sub(r'\s+','', l[0])
-                    b = l[1]
-                    c = [a,b]
-                    log_ll.append(c)
-#            print(log_ll)
-            log.append(dict(log_ll))
-        data_json = (json.dumps(log,indent=2, ensure_ascii=False))
-        print(data_json)
-        with open('users.json', 'w') as outfile:
+        data = data.split('], [')  # Создаем список из str после парсинга
+        log = []                   # Создаем пустой список
+#        dictlog = {}
+        for val in data:           # Пробегаемся по списку полученному из парсинга
+            log_ll = []            # Пустой список для добавления каждого пользователя в отдельный список 
+            log_l = (val.split(','))    # Разбиваем список на пользователей
+            for value in log_l:    #  Проходим по списку пользователя 
+                l = value.split(' : ')  # Разбиваем полученные данные 
+                if len(l) == 2:         # Проверяем чтоб значения в списке были 2
+                    a = re.sub(r'\s+','', l[0]) # Убираем пробелы в первом элементе
+                    b = l[1]                    # Выбираем второй элемент в списке данных пользователя
+                    c = [a,b]                   # объединяем первое и второе значение в список
+                    log_ll.append(c)            # Добавляем полученные данные в список пользователя
+            log.append(dict(log_ll))            # Добавляем полученные данные в список пользователей
+
+        data_json = (json.dumps(log,indent=2, ensure_ascii=False)) # в JSON 
+
+        with open('users.json', 'w') as outfile:                   # Записываем в файл результаты выборки
             json.dump(log, outfile, indent=2, ensure_ascii=False)
-#            outfile.write(data_json)
-#        sys.exit(0)
-#        log = []
-#        d = {}
-#        for val in data:
-##            v = val.replace(' : ',' \' : \' ').split('\\n')
-#            v = val.split('\\n')
-##            print(type(v))
-#            vv = []
-#            for value in v:
-##            d['aaa'] = v
-#                vv.append(value.split(' : '))
-##            print(vv)
-##            for value in v:
-# #               print(value[0:11])
-##                d['s'] = value
-##                log.append(value.split('\':\''))
-##        print(log)
-#        print(d)
-##        dictionary = dict(log)
-##        print(dictionary)
-##        data_json = (json.dumps(log,indent=2, ensure_ascii=False))
-##        print(data_json)
-#
-##    st = st1 + st2          # Объеденяем результаты с NAS серверов
-##    if len(st) > 1:         # Проверка на кол-во одновременных подключений и подключение
-##        print(str(st) + ' | Status=1')
-##        sys.exit(2)
-##    elif len(st) == 0:
-##        print('User is not connected | Status=0')
-##        sys.exit(1)
-##    else:
-##        print(str(st) + ' | Status=1')
-##        sys.exit(0)
+        sys.exit(0)
 
 except Exception: # Когда что не так то все сюда!
     Status = 3
