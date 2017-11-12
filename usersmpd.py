@@ -131,9 +131,9 @@ try:
 #            print(log_ll)
             log.append(dict(log_ll))
         data_json = (json.dumps(log,indent=2, ensure_ascii=False))
-#        print(data_json)
-        with open(users.json, 'w') as outfile:
-            json.dump(data_json, outfile,indent=2, ensure_ascii=False)
+        print(data_json)
+        with open('users.json', 'w') as outfile:
+            json.dump(log, outfile, indent=2, ensure_ascii=False)
 #            outfile.write(data_json)
 #        sys.exit(0)
 #        log = []
